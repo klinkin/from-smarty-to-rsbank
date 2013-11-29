@@ -1,3 +1,5 @@
+// -*- coding: cp866 -*-
+
 import rsexts;
 import sm_imp_const, sm_imp_lib, sm_exception;
 

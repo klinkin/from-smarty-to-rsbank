@@ -1,3 +1,5 @@
+// -*- coding: cp866 -*-
+
 class PostDocFactory(_pmnt, _config)
     var pmnt;
     var config;

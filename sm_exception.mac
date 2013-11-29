@@ -1,4 +1,1 @@
-class ConfigError(_msg, _file_name)    var msg = _msg;    var file_name = _file_name;  end;class (ConfigError) FileNotFoundError(_msg, _file_name)    InitConfigError(_msg, _file_name);end;class (ConfigError) OpenFileError(_msg, _file_name)    InitConfigError(_msg, _file_name);end;
-class (ConfigError) XMLParserError(_msg, _file_name)
-    InitConfigError(_msg, _file_name);
-end;
+// -*- coding: cp866 -*-class ConfigError(_msg, _file_name)    var msg = _msg;    var file_name = _file_name;  end;class (ConfigError) FileNotFoundError(_msg, _file_name)    InitConfigError(_msg, _file_name);end;class (ConfigError) OpenFileError(_msg, _file_name)    InitConfigError(_msg, _file_name);end;class (ConfigError) XMLParserError(_msg, _file_name)    InitConfigError(_msg, _file_name);end;

@@ -1,3 +1,5 @@
+// -*- coding: cp866 -*-
+
 import vars, BankInter, CarryDoc, or_rep_h;
 
 import rcw, fileop, rsexts;

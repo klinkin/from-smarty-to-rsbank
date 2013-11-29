@@ -1,3 +1,5 @@
+// -*- coding: cp866 -*-
+
 const SCHEME_FILE_NAME = "SmartyDocumentsScheme.xml";
 const ACCOUNTS_FILE_NAME = "SmartyAccounts.xml"; 
 

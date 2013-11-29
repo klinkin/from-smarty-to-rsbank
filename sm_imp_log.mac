@@ -1,5 +1,6 @@
-import rsexts;
+// -*- coding: cp866 -*-
 
+import rsexts;
 import sm_imp_lib;
 
 // к сожалению, в классе это объявить нельзя
