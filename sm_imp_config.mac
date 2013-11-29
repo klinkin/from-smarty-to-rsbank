@@ -1,0 +1,144 @@
+import rsexts;
+import sm_imp_const, sm_imp_lib, sm_exception;
+
+file fileScheme() txt 4096;
+file fileAccounts() txt 4096;
+
+class CConfig()
+    var rawXmlSchemes;
+    var rawXmlAccounts;
+    var schemes; 
+    var accounts;
+    var logger;
+
+    macro Constructor()
+        this.accounts = TArray;
+        this.schemes = ActiveX("Scripting.Dictionary");
+        this.rawXmlSchemes = CRtReportXML();
+        this.rawXmlAccounts = CRtReportXML();
+
+        this.OpenFile(SCHEME_FILE_NAME, fileScheme);
+        this.OpenFile(ACCOUNTS_FILE_NAME, fileAccounts);
+ 
+        this.LoadSchemes();
+        this.LoadAccounts();
+    end;
+
+    macro OpenFile(fileName, fileDescriptor)
+        private var flagOpenFile;
+        private var listFile = TDirList();
+        listFile.List(SplitFile(ModuleFileName()) + fileName, "F");
+   
+        if(listFile.Count == 0)
+            RunError ("Файл не найден", FileNotFoundError("Файл не найден", fileName));
+        else
+            flagOpenFile = Open( fileDescriptor, SplitFile(ModuleFileName()) + fileName );
+            if (flagOpenFile == False)
+                RunError ("Невозможно открыть файл", OpenFileError("Невозможно открыть файл", fileName));
+            end;
+        end;
+    end;
+
+    macro getXMLFile(fileDescriptor)
+        private var str = "";
+        while(Next(fileDescriptor))
+            str = str + Trim(fileDescriptor.str);
+        end;
+        return str;
+    end;
+
+    macro LoadSchemes()
+        private var i = 0;
+        private var stat;
+        private var xmlfile = this.getXMLFile(fileScheme);
+        stat = this.rawXmlSchemes.doc.loadXML( xmlfile );
+        if( stat )
+            var tmp = this.rawXmlSchemes.doc.SelectNodes("schemes");
+            if ((tmp != NullVal) and (tmp.length > 0))
+                while (i < tmp.item(0).childNodes.length)
+                    this.ParseScheme(tmp.item(0).childNodes.item(i));
+                    i = i + 1;
+                end;
+            end;
+        else
+            RunError("Неверный формат xml-файла", XMLParserError("Неверный формат xml-файла", SCHEME_FILE_NAME))
+        end
+    end;
+
+    macro ParseScheme(node)
+        private var template;
+        private var i = 0;
+        private var templates = TArray();
+        while (i < node.childNodes.length)
+            template = this.ParseSchemeItem(node.childNodes.item(i));
+            templates[templates.size] = template;
+            i = i + 1;
+        end;
+        this.schemes.Add(node.nodeName, templates);
+    end;
+
+    macro ParseSchemeItem(node)
+       private var i = 0;
+       private var template = ActiveX("Scripting.Dictionary");
+       while (i < node.childNodes.length)
+           template.Add(node.childNodes.item(i).nodeName, ToOEM(node.childNodes.item(i).text));
+           i = i + 1;
+       end;
+       return template;
+    end;
+
+    macro LoadAccounts()
+        private var i = 0;
+        private var stat;
+        private var xmlfile = this.getXMLFile(fileAccounts);
+        stat = this.rawXmlAccounts.doc.loadXML( xmlfile );
+        if( stat )
+            var tmp = this.rawXmlAccounts.doc.SelectNodes("accounts");
+            if ((tmp != NullVal) and (tmp.length > 0))
+                while (i < tmp.item(0).childNodes.length)
+                    this.ParseAccount(tmp.item(0).childNodes.item(i));
+                    i = i + 1;
+                end;
+            end;
+        else
+            RunError("Неверный формат xml-файла", XMLParserError("Неверный формат xml-файла", ACCOUNTS_FILE_NAME))
+        end
+    end;
+
+    macro ParseAccount(node)
+        private var i = 0;
+        private var acc = ActiveX("Scripting.Dictionary");
+        while (i < node.childNodes.length)
+            acc.Add(node.childNodes.item(i).nodeName, ToOEM(node.childNodes.item(i).text));
+            i = i + 1;
+        end;
+        this.accounts[this.accounts.size] = acc;
+    end;
+
+    macro getAccount(cat:String, cur:String, whose:String):String
+        private var acc;
+        for(acc, this.accounts)
+            if ((acc.Item("cat")  == cat) and
+                (acc.Item("cur")  == cur) and
+                (acc.Item("whose") == whose))
+                return acc.Item("value");
+            end;
+        end;
+        for(acc, this.accounts)
+            if ((acc.Item("cat")  == cat) and
+                (acc.Item("cur")  == cur) and
+                (acc.Item("whose") == "common"))
+                return acc.Item("value");
+            end;
+        end;
+        return "Account not found";
+    end;
+
+    // --- Деструктор ---
+    macro Destructor
+       // закрываем файлы
+       Close(fileScheme);
+       Close(fileAccounts);
+    end;
+    Constructor()
+end;

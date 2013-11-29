@@ -1,0 +1,243 @@
+import fileop, rcw, rslx, rsexts;
+
+// ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+// Š« áá ¤«ï à ¡®âë á xml-ä ©« ¬¨
+// ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+class CRtReportXML
+  var doc:object  = NULL;  // ­¥¯®áà¥¤áâ¢¥­­® XML-¤®ªã¬¥­â
+  var err:integer = 0;
+
+  private macro error()
+    if( doc.ParseError.errorCode )   
+      err = doc.ParseError.errorCode;
+    else                             
+      err = -1;
+    end;
+    return err;
+    onError
+      return -1;
+  end;
+
+  macro Destructor()
+    return 0;
+    onError
+      return error();
+  end;
+
+  private macro CreateXML6Object( xml:object )
+    var axServer = NULL;
+    
+    if( isStandalone() )
+      SetParm(1, ActiveX ("Msxml2.DOMDocument.6.0", null, true ) );
+    else
+      axServer = CreateObject( "rsax", "TRsAxServer", "RetailAxServer", false );
+      if( axServer )
+        SetParm(1, axServer.CreateComObject("Msxml2.DOMDocument.6.0"));
+      end;
+    end;
+    return true;
+    OnError( er )
+      return false;
+  end;
+
+  private macro CreateXML4Object( xml:object )
+    var axServer = NULL;
+    
+    if( isStandalone() )
+      SetParm(1, ActiveX ("Msxml2.DOMDocument.4.0", null, true ) );
+    else
+      axServer = CreateObject( "rsax", "TRsAxServer", "RetailAxServer", false );
+      if( axServer )
+        SetParm(1, axServer.CreateComObject("Msxml2.DOMDocument.4.0"));
+      end;
+    end;
+    return true;
+    OnError( er )
+      return false;
+  end;
+
+  private macro CreateXML2Object( xml:object )
+    var axServer = NULL;
+    
+    if( isStandalone() )
+      SetParm(1, ActiveX ("Msxml2.DOMDocument", null, true ) );
+    else
+      axServer = CreateObject( "rsax", "TRsAxServer", "RetailAxServer", false );
+      if( axServer )
+        SetParm(1, axServer.CreateComObject("Msxml2.DOMDocument"));
+      end;
+    end;
+    return true;
+    OnError( er )
+      return false;
+  end;
+
+  private macro CreateXML1Object( xml:object )
+    var axServer = NULL;
+    if( isStandalone() )
+      SetParm(1, ActiveX ("MSXML.DOMDocument") );
+    else
+      axServer = CreateObject( "rsax", "TRsAxServer", "RetailAxServer", false );
+      if( axServer )
+        SetParm(1, axServer.CreateComObject("MSXML.DOMDocument"));
+      end;
+    end;
+    return true;
+    OnError( er )
+      return false;
+  end;
+  // ÄÄÄ á®§¤ ­¨¥ xml-®¡ê¥ªâ  ÄÄÄ
+  private macro CreateXMLObject()
+    var obj:object = NULL;
+
+    if( CreateXML6Object(obj) )  return obj;  end;      
+    if( CreateXML4Object(obj) )  return obj;  end;      
+    if( CreateXML2Object(obj) )  return obj;  end;      
+    if( CreateXML1Object(obj) )  return obj;  end;
+
+    RunError("Žè¨¡ª  ¨­¨æ¨ «¨§ æ¨¨ Active-X ª®¬¯®­¥­â .");
+  end;
+  // ÄÄÄ Š®­áâàãªâ®à ÄÄÄ
+  private macro Constructor()
+    doc = CreateXMLObject();
+    return 0;
+    onError
+      msgbox("Žè¨¡ª  ¨­¨æ¨ «¨§ æ¨¨ Active-X ª®¬¯®­¥­â .\n‚®§¬®¦­® ­¥®¡å®¤¨¬® ¯¥à¥ãáâ ­®¢¨âì Internet Explorer.");
+      exit(1);
+      return error();
+  end;
+  // ÄÄÄ § £àã§ª  ä ©«  ÄÄÄ
+  macro Load( path:string )
+    doc.load( path );
+    return 0;
+    onError
+      return error();
+  end;
+  // ÄÄÄ á®åà ­¥­¨¥ ÄÄÄ
+  macro Save( path:string )
+    doc.save( path );
+    return 0;
+    onError
+      return error();
+  end;
+  // ÄÄÄ ¨­¨æ¨ «¨§ æ¨ï ÄÄÄ
+  macro Init()
+    var vrsn = doc.createProcessingInstruction( "xml", "version=\"1.0\" encoding=\"WINDOWS-1251\"" );
+    doc.appendChild( vrsn );
+    return 0;
+    onError
+      return error();
+  end;
+
+  // Š®­áâàãªâ®à
+  Constructor();
+end;
+
+macro GetRegVal( ãâì, ’¨¯, Val )
+
+  Var err;
+
+  GetRegistryValue( ãâì, ’¨¯, Val, err );
+
+  if  ( err != REG_OK ) 
+     MsgBox( "Žè¨¡ª  çâ¥­¨ï ª«îç  ", ãâì );
+     if ( ’¨¯ == V_STRING ) Val = False;
+     else                   Val = 0;
+     end;    
+  else
+     if ( ’¨¯ == V_STRING )
+       if((index( Val,"YES") > 0) OR (index("ON") > 0)) 
+          Val = TRUE;
+       elif((index( Val,"NO")  > 0) OR (index("OFF") > 0))
+          Val = FALSE;
+       end;
+     end;
+  end;
+  setparm (2, Val);
+
+end;
+
+macro FindBranch(_branch)
+    private file BranchList ("listfdep.dbt", "sbbank.def") key 0;
+    var stat;
+    
+    BranchList.FNCash = _branch;
+    stat = GetEQ(BranchList);
+    if (stat)
+        return BranchList.FNCash;
+    else
+        return False;
+    end;
+end;
+
+private macro DayWright ( d, m, y )
+    private var DayMes = TArray;
+    DayMes( 1 ) = 31; DayMes( 4 ) = 30;  DayMes( 7 ) = 31; DayMes( 10 ) = 31;
+    DayMes( 2 ) = 28; DayMes( 5 ) = 31;  DayMes( 8 ) = 31; DayMes( 11 ) = 30;
+    DayMes( 3 ) = 31; DayMes( 6 ) = 30;  DayMes( 9 ) = 30; DayMes( 12 ) = 31;
+
+   if ( ( d <= DayMes ( m ) ) or ( d == 29 ) and ( mod (y, 4) == 0 ) )
+       return true;
+   else
+       return false;
+   end;
+end;
+
+macro StrToDate(str_date: string, date_date, errmsg)
+    var Razd, day, mon, year;
+    
+    if ( StrBrk (str_date, ".-/") == 0 )
+      errmsg = "(1) ¥¢¥à­ë© ä®à¬ â ¤ âë " + str_date;
+      setparm(3, errmsg);
+      return False;
+    end;
+    
+    if ( Index( str_date, "." ) > 0 )
+        Razd = ".";
+    elif ( Index( str_date, "-" ) > 0 )
+        Razd = "-";
+    elif ( Index( str_date, "/" ) > 0 )
+        Razd = "/";
+    end;
+    
+    day = int(SubStr( str_date, 1, Index(str_date, Razd) - 1));
+    str_date = SubStr( str_date, Index(str_date, Razd) + 1);
+    mon = int(SubStr( str_date, 1, Index( str_Date, Razd ) - 1));
+    str_date = SubStr( str_date, Index( str_date, Razd) + 1);
+    year = int(str_date);
+    
+    if ( ( ( year == 0 ) and ( mon == 0 ) and ( day == 0 ) ) or
+         ( ( year > 0 ) and
+           ( mon > 0 )  and ( mon < 13 ) and
+           ( day > 0 )  and ( day < 32 ) and
+           DayWright (day, mon, year) )
+       )
+      setparm(1, date( day, mon, year));
+      return True;
+    else
+      errmsg = "(1) ¥¢¥à­ ï ¤ â  " + str_date;
+      setparm(2, errmsg);
+      return False;
+    end;
+end;
+
+macro iif(lIf,IfTrue,IfFalse)
+    if (lIf)
+        return(IfTrue);
+    else
+        return(IfFalse);
+    end;
+end;
+
+macro getError( msg )
+    var f_sbbank = Tbfile( "sbbank.msg", "r", 0, null, "sbbank.def" );
+
+    f_sbbank.rewind();  f_sbbank.clear();
+    f_sbbank.rec.Number = msg;
+    if( f_sbbank.getEQ() )
+        return "Error code:" + string(msg) + " - " + f_sbbank.rec.Contents;
+    else
+        return "Error code:" + string(msg);
+    end;
+end;
+

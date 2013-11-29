@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="WINDOWS-1251"?>
+<schemes>
+<SmartyPay comment="Платеж за кредит">
+
+<document comment="прием суммы перевода">
+<Account_Payer>[[cash_acc]]</Account_Payer>
+<Account_Receiver>{{send_AmountCreditAcc}}</Account_Receiver>
+<Sum>{{trnClAmount}}</Sum>
+<IsCur>0</IsCur>
+<Ground>Прием перевода по системе Контакт №{{trnReference}} {{sName}} {{sLastName}} {{sSurName}}</Ground>
+<Date_Value>{{trnDate}}</Date_Value>
+<Date_Document>{{trnDate}}</Date_Document>
+<Pay_Date>{{trnDate}}</Pay_Date>
+<Number_Pack>501</Number_Pack>
+<Symbol_Cach>#@string( MkStr(" ", 3 - StrLen("{{CS_IN}}") ) + "{{CS_IN}}")@#</Symbol_Cach>
+<Kind_Oper>#@string(" 3")@#</Kind_Oper>
+<Numb_Document>{{trnReference}}/1</Numb_Document>
+</document>
+
+<document comment="прием комиссии">
+<Account_Payer>[[cash_acc]]</Account_Payer>
+<Account_Receiver>[[revenue_acc]]</Account_Receiver>
+<Sum>{{trnFeesClientLocal}}</Sum>
+<IsCur>0</IsCur>
+<Ground>Прием комиссии за перевод по системе Контакт №{{trnReference}} {{sName}} {{sLastName}} {{sSurName}}</Ground>
+<Date_Value>{{trnDate}}</Date_Value>
+<Date_Document>{{trnDate}}</Date_Document>
+<Pay_Date>{{trnDate}}</Pay_Date>
+<Number_Pack>502</Number_Pack>
+<Symbol_Cach>#@string(" 32")@#</Symbol_Cach>
+<Kind_Oper>#@string(" 3")@#</Kind_Oper>
+<Numb_Document>{{trnReference}}/2</Numb_Document>
+</document>
+
+</SmartyPay>
+</schemes>

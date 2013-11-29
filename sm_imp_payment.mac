@@ -1,0 +1,34 @@
+import sm_imp_const;
+
+// Класс платежа
+class CPayment(_file_row)
+    var pmnt;
+    var errors; // массив ошибок
+    var postdocs; // массив проводок
+
+    macro Constructor(_file_row)
+        //debugbreak();
+        this.errors    = TArray();
+        this.postdocs  = TArray();
+        this.pmnt = ActiveX("Scripting.Dictionary");
+
+        pmnt.Add("NUM", _file_row(NUM));
+        pmnt.Add("PDATE", _file_row(PDATE));
+        pmnt.Add("CARD_NUM", _file_row(CARD_NUM));
+        pmnt.Add("SUM_WITH_COMIS", _file_row(SUM_WITH_COMIS));
+        pmnt.Add("SUM", _file_row(SUM));
+        pmnt.Add("BANK", _file_row(BANK));
+        pmnt.Add("BIC", _file_row(BIC));
+        pmnt.Add("CORACC", _file_row(CORACC));
+        pmnt.Add("FIO", _file_row(FIO));
+        pmnt.Add("ACC", _file_row(ACC));
+        pmnt.Add("INN", _file_row(INN));
+        pmnt.Add("PURPOSE", _file_row(PURPOSE));
+    end;
+
+    macro to_str()                                                                                              
+        return string(" Номер " + this.pmnt.item("NUM") + ", сумма " + this.pmnt.item("SUM") + ", по карте " + this.pmnt.item("CARD_NUM"));
+    end;
+
+    Constructor(_file_row);
+end;        

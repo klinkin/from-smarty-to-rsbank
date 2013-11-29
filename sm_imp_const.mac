@@ -1,0 +1,24 @@
+const SCHEME_FILE_NAME = "SmartyDocumentsScheme.xml";
+const ACCOUNTS_FILE_NAME = "SmartyAccounts.xml"; 
+
+// директории где лежат исходные файлы
+const SOURCE_FILE_PATH  = "..\\Import\\SMARTY\\SOURCE\\";
+const SOURCE_PATTERN_FILE = "*.txt";
+const SEPARATE = ";";
+
+// директории куда мы файлы перекладываем после обработки
+const DEST_FILE_PATH_OK = "..\\Import\\SMARTY\\RESULT\\OK\\";             // ОК
+const DEST_FILE_PATH_ERROR = "..\\Import\\SMARTY\\RESULT\\ERROR\\";       // Проблема
+
+const NUM = 0;
+const PDATE = 1;
+const CARD_NUM = 2;
+const SUM_WITH_COMIS = 3;
+const SUM = 4;
+const BANK = 5;
+const BIC = 6;
+const CORACC = 7;
+const FIO = 8;
+const ACC = 9;
+const INN = 10;
+const PURPOSE = 11;

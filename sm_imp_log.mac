@@ -1,0 +1,232 @@
+import rsexts;
+
+import sm_imp_lib;
+
+// ª á®¦ «¥­¨î, ¢ ª« áá¥ íâ® ®¡êï¢¨âì ­¥«ì§ï
+file fileLog() txt 2048 append;
+file fileTxtReport() txt 2048 write;
+   
+class CImportLog( nameFile, nameFileTxt )
+    var flagOpenLog = false, flagOpenTxt = false; // ä« £, ãª §ë¢ îé¨©, çâ® ä ©« ®âªàëâ
+    var strFile; // áâà®ª  ä ©« 
+    var {curdate};
+    var {oper};
+
+    var count = 0, countErr = 0; // ª®«¨ç¥áâ¢® ¯« â¥¦¥©
+    
+    macro Constructor( nameFile, nameFileTxt )
+       var listFile = TDirList();
+       
+       listFile.List(nameFile, "F");
+   
+       if(listFile.Count == 0)
+          // á®§¤ ¥¬ ä ©«
+          flagOpenLog = Open( fileLog, nameFile );
+          strFile = "                      ‹®£ ¯® ¯à®æ¥¤ãà¥ \"‡ £àã§ª  ¯« â¥¦¥© Smarty\"\n";
+          insert(fileLog, strFile);
+       else
+          flagOpenLog = Open( fileLog, nameFile );
+       end;
+       // ®âªàë¢ ¥¬ ä ©« ¤«ï ®¤­®£® á¥ ­á  á¢ï§¨
+       if( nameFileTxt )
+          flagOpenTxt = Open( fileTxtReport, nameFileTxt );
+          strFile = "                      ‹®£ ¯® ¯à®æ¥¤ãà¥ \"‡ £àã§ª  ¯« â¥¦¥© Smarty\"\n";
+          insert( fileTxtReport, strFile );
+       end;
+       strFile = "";
+    end;
+    // --- „¥áâàãªâ®à ---
+    macro Destructor
+       // § ªàë¢ ¥¬ ä ©«
+       if( flagOpenLog )
+          Close(fileLog);
+       end;
+       if( flagOpenTxt )
+          Close(fileTxtReport);
+          // ¥á«¨ ¬ ªà®á § ¯ãé¥­ … ç¥à¥§ ¯« ­¨à®¢é¨ª, ­ ¯¥ç â ¥¬ ®âç¥â 
+          if (not IsShedulerRunning())
+             ViewFile(fileTxtReport);
+          end;
+       end;
+    end;
+    // --- ¥ç âì 1 ïç¥©ª¨ ---
+    macro Cell( str, size )
+       return str + MkStr(" ", size-StrLen(str));
+    end;
+
+    // --- ¥ç âì è ¯ª¨ «®£  ---
+    macro print_header()
+
+       strFile = "„ â  ®¡à ¡®âª¨: " + String(Date()) + "  " + String(Time()) + "\n";
+       insert( fileLog, strFile );
+       if( flagOpenTxt )
+          insert( fileTxtReport, strFile );
+       end;
+   
+       strFile = "„ â  ®¯¥à æ¨®­®£® ¤­ï: " + String({curdate}) + "\n";
+       insert( fileLog, strFile );
+       if( flagOpenTxt )
+          insert( fileTxtReport, strFile );
+       end;
+   
+       strFile = "ƒ®«®¢­®© ®ä¨á: " + "Š ‚…‘’" + "\n";
+       insert( fileLog, strFile );
+       if( flagOpenTxt )
+          insert( fileTxtReport, strFile );
+       end;
+   
+       strFile = "¯¥à æ¨®­¨áâ: " + String({oper}) + "\n";
+       insert( fileLog, strFile );
+       if( flagOpenTxt )
+          insert( fileTxtReport, strFile );
+       end;
+       strFile = "";
+    end;
+
+    // --- ¥ç âì è ¯ª¨ â ¡«¨æë ¢ë¯« â ¯¥à¥¢®¤®¢ Smarty ---
+    macro print_table_header(filepath)
+        if( strFile == "" ) // ¥á«¨ ¯ãáâ ï, â® ¡ë«¨ ®¯¥à æ¨¨
+            strFile = "” ©«: " + filepath + "\n"
+                      "ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿\n"+
+                      "³   ü « â¥¦    ³    „ â     ³    ü Š àâë    ³  ‘ã¬¬ +ª®¬¨á ³    ‘ã¬¬    ³                ­ª                 ³    ˆŠ    ³    Š®à. ‘ç¥â        ³               ”ˆ                  ³     ‘ç¥â            ³     ˆ    ³                      §­ ç¥­¨¥           ³  è¨¡ª¨                                                                                                                             ³\n"+
+                      "ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´";
+
+
+            if( flagOpenTxt )
+               insert( fileTxtReport, strFile );
+            end;
+        end;
+        strFile = "";
+    end;
+    
+    // --- ¥ç â ¥¬ áâà®ªã ¯® ¢å®¤ïé¨¬---
+    macro print_row(pmnt)
+
+        var strError = "";
+        var i = 0;
+        if( pmnt.Errors.size() != 0 )
+            while( i < pmnt.Errors.size() )
+               strError = strError + pmnt.Errors[i];
+               i = i + 1;
+            end;
+        end;
+
+        //debugbreak();
+        strFile = strFile + "³" + Cell(string(pmnt.pmnt.Item("NUM")            ), 15 ) + "³" +   
+                                  Cell(string(pmnt.pmnt.Item("PDATE")          ), 12 ) + "³" + 
+                                  Cell(string(pmnt.pmnt.Item("CARD_NUM")       ), 15 ) + "³" +  
+                                  Cell(string(pmnt.pmnt.Item("SUM_WITH_COMIS") ), 14 ) + "³" +  
+                                  Cell(string(pmnt.pmnt.Item("SUM")            ), 12 ) + "³" +  
+                                  Cell(string(pmnt.pmnt.Item("BANK")           ), 36 ) + "³" +  
+                                  Cell(string(pmnt.pmnt.Item("BIC")            ), 11 ) + "³" +  
+                                  Cell(string(pmnt.pmnt.Item("CORACC")         ), 21 ) + "³" +  
+                                  Cell(string(pmnt.pmnt.Item("FIO")            ), 36 ) + "³" +  
+                                  Cell(string(pmnt.pmnt.Item("ACC")            ), 21 ) + "³" +  
+                                  Cell(string(pmnt.pmnt.Item("INN")            ), 10 ) + "³" +  
+                                  Cell(string(pmnt.pmnt.Item("PURPOSE")        ), 10 ) + "³" +                                    
+                                  Cell(string(strError                         ), 133) + "³";
+                                                                                                                                         
+        if( flagOpenTxt )
+           insert( fileTxtReport, strFile );
+        end;
+        strFile = "";
+        if( pmnt.Errors.size() != 0 )
+           countErr = countErr + 1;
+        end;
+        count = count + 1;
+    end;
+
+    // --- ¥ç â ¥¬ áâà®ªã ¯® á¬¥­¥---
+    macro print_error(filepath, msg)
+
+        private var namefile, extfile;
+        SplitFile(filepath, namefile, extfile);
+                                                                                                                                         
+        strFile = "ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´";
+
+        if( flagOpenTxt )
+           insert( fileTxtReport, strFile );
+        end;
+        strFile = "³" + Cell(string(namefile ), 17 ) + "³" +
+                        Cell(string(msg      ), 133) + "³";
+
+        if( flagOpenTxt )
+           insert( fileTxtReport, strFile );
+        end;
+        strFile = "ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´";
+
+        if( flagOpenTxt )
+           insert( fileTxtReport, strFile );
+        end;
+
+        strFile = "";
+    end;
+
+
+    // --- Š®­¥æ â ¡«¨æë ---
+    macro print_table_footer()
+        if( strFile == "" )
+            strFile = "ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ";
+            if( flagOpenTxt )
+               insert( fileTxtReport, strFile );
+            end;
+        end;
+        strFile = "";
+    end;
+
+    // --- Š®­¥æ «®£  ---
+    macro print_footer()
+       strFile = "\n" + "ˆá¯®«­¨â¥«ì: " + {oper} + "\n\n";
+       insert( fileLog, strFile );
+       if( flagOpenTxt )
+          insert( fileTxtReport, strFile );
+       end;
+       strFile = "";
+    end;
+    // --- ¥ç âì áâà®ª¨ á®®¡é¥­¨© ---
+    macro Msg(msg)
+       strFile = strFile + msg;
+       insert( fileLog, strFile );
+       if( flagOpenTxt )
+          insert( fileTxtReport, strFile );
+       end;
+    end; 
+    // --- ¥ç âì áâà®ª¨ ---
+    macro MsgLn(msg)
+       insert( fileLog, msg );
+       if( flagOpenTxt )
+          insert( fileTxtReport, msg );
+       end;
+    end; 
+
+    // --- ¥ç âì áâà®ª¨ ¢ «®£ ---
+    macro print_to_log(module, lineno, level, msg, needtoreport)
+       if (ValType(needtoreport) == V_UNDEF)
+           needtoreport = False
+       end;
+       var str = string(module +"[LINE:" + lineno + "]# " + StrUpr(level) + "[" + date() + " " + time() + "]   " + msg);
+       insert( fileLog, str );
+       if( flagOpenTxt and needtoreport)
+          insert( fileTxtReport, str );
+       end;
+    end; 
+
+    // --- ¥ç âì áâà®ª¨ ¨â®£® ---
+    macro print_total()
+       strFile = "\n‚á¥£® ®¡à ¡®â ­® ¯« â¥¦¥©:   " + String(count);
+       insert( fileLog, strFile );
+       if( flagOpenTxt )
+          insert( fileTxtReport, strFile );
+       end;
+       strFile = "¨§ ­¨å á ®è¨¡ª ¬¨:  " + String(countErr);
+       insert( fileLog, strFile );
+       if( flagOpenTxt )
+          insert( fileTxtReport, strFile );
+       end;
+
+       count      = 0;        
+       countErr   = 0;       
+    end;
+   
+    Constructor( nameFile, nameFileTxt );
+end;

@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="WINDOWS-1251"?>
+<accounts>
+
+<account comment="счет кассы голова">
+<cat>cash_acc</cat>
+<cur>RUR</cur>
+<whose>DSAM</whose>
+<value>20202810200000000001</value>
+</account>
+
+<account comment="счет кассы голова">
+<cat>cash_acc</cat>
+<cur>USD</cur>
+<whose>DSAM</whose>
+<value>20202840500000000001</value>
+</account>
+
+<account comment="счет кассы голова">
+<cat>cash_acc</cat>
+<cur>EUR</cur>
+<whose>DSAM</whose>
+<value>20202978100000000001</value>
+</account>
+
+<account comment="счет кассы филиала">
+<cat>cash_acc</cat>
+<cur>RUR</cur>
+<whose>DSTZ</whose>
+<value>20202810200000000001</value>
+</account>
+
+<account comment="счет кассы филиала">
+<cat>cash_acc</cat>
+<cur>USD</cur>
+<whose>DSTZ</whose>
+<value>20202840500000000001</value>
+</account>
+
+<account comment="счет кассы филиала">
+<cat>cash_acc</cat>
+<cur>EUR</cur>
+<whose>DSTZ</whose>
+<value>20202978100000000001</value>
+</account>
+
+<account comment="счет БПА">
+<cat>47422_acc</cat>
+<cur>RUR</cur>
+<whose>TZBI</whose>
+<value>47422810900000000067</value>
+</account>
+
+<account comment="счет БПА">
+<cat>47422_acc</cat>
+<cur>USD</cur>
+<whose>TZBI</whose>
+<value>47422810900000000067</value>
+</account>
+
+<account comment="счет БПА">
+<cat>47422_acc</cat>
+<cur>EUR</cur>
+<whose>TZBI</whose>
+<value>47422810900000000067</value>
+</account>
+
+
+
+
+<account comment="счет доходов голова">
+<cat>revenue_acc</cat>
+<cur>RUR</cur>
+<whose>DSAM</whose>
+<value>70601810800001210210</value>
+</account>
+
+<account comment="счет доходов голова">
+<cat>revenue_acc</cat>
+<cur>USD</cur>
+<whose>DSAM</whose>
+<value>70601810800001210210</value>
+</account>
+
+<account comment="счет доходов голова">
+<cat>revenue_acc</cat>
+<cur>EUR</cur>
+<whose>DSAM</whose>
+<value>70601810800001210210</value>
+</account>
+
+<account comment="счет доходов филиала">
+<cat>revenue_acc</cat>
+<cur>RUR</cur>
+<whose>DSTZ</whose>
+<value>70601810800001210210</value>
+</account>
+
+<account comment="счет доходов филиала">
+<cat>revenue_acc</cat>
+<cur>USD</cur>
+<whose>DSTZ</whose>
+<value>70601810800001210210</value>
+</account>
+
+<account comment="счет доходов филиала">
+<cat>revenue_acc</cat>
+<cur>EUR</cur>
+<whose>DSTZ</whose>
+<value>70601810800001210210</value>
+</account>
+
+<account comment="счет доходов БПА">
+<cat>revenue_acc</cat>
+<cur>RUR</cur>
+<whose>TZBI</whose>
+<value>70601810300001210228</value>
+</account>
+
+<account comment="счет доходов БПА">
+<cat>revenue_acc</cat>
+<cur>USD</cur>
+<whose>TZBI</whose>
+<value>70601810300001210228</value>
+</account>
+
+<account comment="счет доходов БПА">
+<cat>revenue_acc</cat>
+<cur>EUR</cur>
+<whose>TZBI</whose>
+<value>70601810300001210228</value>
+</account>
+
+
+
+<account comment="счет расходов голова">
+<cat>expense_acc</cat>
+<cur>RUR</cur>
+<whose>DSAM</whose>
+<value>70606810200002520326</value>
+</account>
+
+<account comment="счет расходов голова">
+<cat>expense_acc</cat>
+<cur>USD</cur>
+<whose>DSAM</whose>
+<value>70606810100002520303</value>
+</account>
+
+<account comment="счет расходов голова">
+<cat>expense_acc</cat>
+<cur>EUR</cur>
+<whose>DSAM</whose>
+<value>70606810100002520303</value>
+</account>
+
+<account comment="счет расходов филиал">
+<cat>expense_acc</cat>
+<cur>RUR</cur>
+<whose>DSTZ</whose>
+<value>70606810200002520326</value>
+</account>
+
+<account comment="счет расходов филиал">
+<cat>expense_acc</cat>
+<cur>USD</cur>
+<whose>DSTZ</whose>
+<value>70606810100002520303</value>
+</account>
+
+<account comment="счет расходов филиал">
+<cat>expense_acc</cat>
+<cur>EUR</cur>
+<whose>DSTZ</whose>
+<value>70606810100002520303</value>
+</account>
+
+<account comment="счет расходов БПА">
+<cat>expense_acc</cat>
+<cur>RUR</cur>
+<whose>TZBI</whose>
+<value>70606810900002520338</value>
+</account>
+
+<account comment="счет расходов БПА">
+<cat>expense_acc</cat>
+<cur>USD</cur>
+<whose>TZBI</whose>
+<value>70606810200002520339</value>
+</account>
+
+<account comment="счет расходов БПА">
+<cat>expense_acc</cat>
+<cur>EUR</cur>
+<whose>TZBI</whose>
+<value>70606810600002520340</value>
+</account>
+
+<account comment="корр счет">
+<cat>rsbcorr_acc</cat>
+<cur>RUR</cur>
+<whose>common</whose>
+<value>30110810000000000312</value>
+</account>
+
+<account comment="корр счет">
+<cat>rsbcorr_acc</cat>
+<cur>USD</cur>
+<whose>common</whose>
+<value>30110840300000000312</value>
+</account>
+
+<account comment="корр счет">
+<cat>rsbcorr_acc</cat>
+<cur>EUR</cur>
+<whose>common</whose>
+<value>30110978900000000312</value>
+</account>
+
+<account comment="конверсионный счет">
+<cat>convert_a_acc</cat>
+<cur>RUR</cur>
+<whose>common</whose>
+<value>47406810600000000011</value>
+</account>
+
+<account comment="конверсионный счет">
+<cat>convert_a_acc</cat>
+<cur>USD</cur>
+<whose>common</whose>
+<value>47406810600000000011</value>
+</account>
+
+<account comment="конверсионный счет">
+<cat>convert_a_acc</cat>
+<cur>EUR</cur>
+<whose>common</whose>
+<value>47406810600000000011</value>
+</account>
+
+<account comment="конверсионный счет">
+<cat>convert_p_acc</cat>
+<cur>USD</cur>
+<whose>common</whose>
+<value>47405840600000000011</value>
+</account>
+
+<account comment="конверсионный счет">
+<cat>convert_p_acc</cat>
+<cur>EUR</cur>
+<whose>common</whose>
+<value>47406978600000000011</value>
+</account>
+
+</accounts>
+
+
+

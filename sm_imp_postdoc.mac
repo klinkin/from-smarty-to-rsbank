@@ -1,0 +1,171 @@
+class PostDocFactory(_pmnt, _config)
+    var pmnt;
+    var config;
+    private var {oper};
+
+    macro Constructor(_pmnt, _config)
+        this.pmnt = _pmnt;
+        this.config = _config;
+    end;
+    
+    macro Create(type:String):Tarray
+        private var i = 0;
+        private var doc;
+        var docs = TArray();
+        // берем из конфига нужного типа схему проводок
+        private var scheme = this.config.schemes.Item(type);
+        var template;
+
+        for(template, scheme)
+            // для каждого шаблона в схеме создаем проводку
+            doc = this.CreatePostDoc(template);
+            // если сумма документа 0, то пропускаем такой документ
+            if ( doc.rec.Sum > 0 )
+                docs[docs.size] = doc;
+            end;
+        end; 
+        return docs;
+    end;
+
+    macro getSpecParams(text:String, sign_begin:String, sign_end:String): TArray
+        // Метод парсит входящую строку text, выделяет спецпеременные, начинающиеся на sign_begin и окнчивающиеся на sign_end.
+        // Возвращает массив спец переменных.
+        var result = TArray;
+        var ind_begin, ind_end;
+        while ( Index( text, sign_begin ) > 0 )
+            ind_begin = Index( text, sign_begin );
+            ind_end = Index( text, sign_end, ind_begin + 1);
+            if ( ind_end > 0 )
+                result[result.size] = SubStr(text, ind_begin, ind_end - ind_begin + StrLen(sign_end));
+                text = SubStr(text, ind_end + StrLen(sign_end))
+            else 
+                msgbox("Тег " + sign_begin + "не закрыт");
+                break;
+            end;
+        end;
+        return result;
+    end;
+
+    macro getValue(text:String, vtype, iscur)
+        private var mm, dd, yyyy, result;
+        private var expr;
+
+        // в тексте могут встречаться спецпеременные, начинающиеся на {{ и оканчивающиеся }}
+        // получим из текста все спец переменные
+        private var spec_params = this.getSpecParams(text, "{{", "}}");
+        var param, val;
+        for(param, spec_params)
+            val = this.pmnt.pmnt.Item(SubStr(param, 3, StrLen(param) - 4));
+            text = StrSubst(text, param, val);
+        end;
+
+        // также в тексте могут быть счета отеделения, начинающиеся на #
+        private var sharp_params = this.getSpecParams(text, "[[", "]]");
+        for(param, sharp_params)
+            
+            if (iscur == 0)
+                val = this.config.getAccount(SubStr(param, 3, StrLen(param) - 4), "RUR", this.pmnt.getPointCode());
+            else   
+                val = this.config.getAccount(SubStr(param, 3, StrLen(param) - 4), this.pmnt.pmnt.Item("trnCurrency"), this.pmnt.getPointCode());
+            end;
+            text = StrSubst(text, param, val);
+        end;
+
+        //А еще можно передать кусок rsl кода, должен начинаться на {{ и заканчиваться }}
+        private var function_params = this.getSpecParams(text, "#@" , "@#");
+        for(param, function_params)
+            expr = SubStr(param, 3, StrLen(param) - 4);
+            val = string(ExecExp(expr));
+            text = StrSubst(text, param, val);
+            if(vtype == V_DATE)
+                // вернем без приведения
+                return date(text);
+            end; 
+        end;
+         
+         
+        if (vtype == V_INTEGER)
+            result = int(text);
+        elif(vtype == V_NUMERIC)
+            result = numeric(text);
+        elif(vtype == V_DATE)
+            dd = int(SubStr(text, 7, 2));
+            mm = int(SubStr(text, 5, 2));
+            yyyy = int(SubStr(text, 1, 4)); 
+            result = date(dd, mm, yyyy);
+        else
+            result = text; 
+        end;
+        return result;         
+    end;
+
+    macro CreatePostDoc(template):TRecHandler
+        if ( template.Item("IsCur") == 0 )
+            return this.CreateRURPostDoc(template);
+        elif ( template.Item("IsCur") == 1 )
+            return this.CreateVALPostDoc(template);
+        end;
+    end;
+
+    macro CreateVALPostDoc(template, currency:Integer):TRecHandler
+        private var i = 0;
+        private var v_postdoc = TRecHandler("postdoc$.dbt", "bank.def");
+        private var child, ind, field_type, value;
+        debugbreak();
+        // сначала заполним данными по дефолту, потом уже теми, что из xml-шаблона
+        v_postdoc.clear();
+        v_postdoc.rec.oper       = {oper};
+        v_postdoc.rec.Payment    = 6;
+        v_postdoc.rec.Shifr_Oper = "09";
+        v_postdoc.rec.Kind_Oper  = " 1";
+
+        if ( this.pmnt.pmnt.Item("trnCurrency") == "USD")  
+            v_postdoc.rec.Code_Currency  = 840;
+        elif ( this.pmnt.pmnt.Item("trnCurrency") == "EUR")  
+            v_postdoc.rec.Code_Currency  = 978;
+        end;
+
+        // данные из xml-шаблона, при этом дефолтные переписываются
+        while (i < template.Keys.Size)
+            ind = FldIndex( v_postdoc, template.Keys[i]);
+            if ( ind >= 0 )
+                field_type = v_postdoc.GetFldInfo[ind * 5 + 1];  // это хитрый способ получить тип поля в структуре
+                value = this.getValue(template.Items[i], field_type, template.Item("IsCur")); // значение из шаблона
+                v_postdoc.rec[ind] = value;  
+            end;
+            i = i + 1;
+        end;
+        return v_postdoc;
+
+    end;
+
+    macro CreateRURPostDoc(template, currency:Integer):TRecHandler
+        
+        private var i = 0;
+        private var r_postdoc = TRecHandler("postdoc.dbt", "bank.def");
+        private var child, ind, field_type, value;
+
+        // сначала заполним данными по дефолту, потом уже теми, что из xml-шаблона
+        r_postdoc.clear();
+        r_postdoc.rec.oper       = {oper};
+        r_postdoc.rec.Payment    = 6;
+        r_postdoc.rec.Shifr_Oper = "09";
+        r_postdoc.rec.Kind_Oper  = " 1";
+
+        r_postdoc.rec.Code_Currency  = 0;
+
+        // данные из xml-шаблона, при этом дефолтные переписываются
+        while (i < template.Keys.Size)
+            ind = FldIndex( r_postdoc, template.Keys[i]);
+            if ( ind >= 0 )
+                field_type = r_postdoc.GetFldInfo[ind * 5 + 1];  // это хитрый способ получить тип поля в структуре
+                value = this.getValue(template.Items[i], field_type, template.Item("IsCur")); // значение из шаблона
+                r_postdoc.rec[ind] = value;  
+            end;
+            i = i + 1;
+        end;
+        return r_postdoc;
+    end;
+
+    Constructor(_pmnt, _config);
+end;
