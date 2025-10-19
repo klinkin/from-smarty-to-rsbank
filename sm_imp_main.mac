@@ -1,13 +1,13 @@
-// -*- coding: cp866 -*-
+// -*- coding: utf-8 -*-
 
 import vars, BankInter, CarryDoc, or_rep_h;
 
 import rcw, fileop, rsexts;
 
-import sm_imp_lib, sm_imp_log, sm_imp_payment, sm_imp_config, sm_imp_postdoc, sm_exception; 
+import sm_imp_lib, sm_imp_log, sm_imp_payment, sm_imp_config, sm_imp_postdoc, sm_exception;
 
-/* Исходный текстовый файл */
-file CurrentFile() txt 2048; 
+/* ╨в╨╡╨║╤Г╤Й╨╕╨╣ ╨╛╨▒╤А╨░╨▒╨░╤В╤Л╨▓╨░╨╡╨╝╤Л╨╣ ╤Д╨░╨╣╨╗ */
+file CurrentFile() txt 2048;
 
 
 class CLoader()
@@ -16,25 +16,25 @@ class CLoader()
     var config: CConfig;
     var logfile: String;
     var reportfile: String;
-    var pmnt: CPayment; // текущий обрабатываемый платеж
+    var pmnt: CPayment; // ╤В╨╡╨║╤Г╤Й╨░╤П ╨╛╨▒╤А╨░╨▒╨░╤В╤Л╨▓╨░╨╡╨╝╨░╤П ╨╖╨░╨┐╨╕╤Б╤М
 
 
 
-    //Создаем исходящие директории 
+    // ╨б╨╛╨╖╨┤╨░╨╜╨╕╨╡ ╨▓╤Л╤Е╨╛╨┤╨╜╨╛╨╣ ╨┤╨╕╤А╨╡╨║╤В╨╛╤А╨╕╨╕, ╨╡╤Б╨╗╨╕ ╨╜╨╡ ╤Б╤Г╤Й╨╡╤Б╤В╨▓╤Г╨╡╤В
     macro MakeOutCatalog(catalog_path)
         private var listFile = TDirList();
 
         listFile.List(catalog_path, "D");
         if(listFile.Count == 0)
-            this.log.print_to_log(ModuleFileName(), CurrentLine(), "DEBUG", "Создаем директорию " + catalog_path);
+            this.log.print_to_log(ModuleFileName(), CurrentLine(), "DEBUG", "╨б╨╛╨╖╨┤╨░╤С╨╝ ╨║╨░╤В╨░╨╗╨╛╨│ " + catalog_path);
             MakeDir(catalog_path)
         end;
     end;
 
     macro Constructor()
-        
-        GetRegVal( "BANK_INI\\ОБЩИЕ ПАРАМЕТРЫ\\ДИРЕКТОРИИ\\TEXTDIR", V_STRING, this.logfile);
-        GetRegVal( "BANK_INI\\ОБЩИЕ ПАРАМЕТРЫ\\ДИРЕКТОРИИ\\TEXTDIR", V_STRING, this.reportfile);
+
+        GetRegVal( "BANK_INI\\╨Я╨░╤А╨░╨╝╨╡╤В╤А╤Л ╤Б╨╕╤Б╤В╨╡╨╝╤Л\\╨Э╨░╤Б╤В╤А╨╛╨╣╨║╨╕\\TEXTDIR", V_STRING, this.logfile);
+        GetRegVal( "BANK_INI\\╨Я╨░╤А╨░╨╝╨╡╤В╤А╤Л ╤Б╨╕╤Б╤В╨╡╨╝╤Л\\╨Э╨░╤Б╤В╤А╨╛╨╣╨║╨╕\\TEXTDIR", V_STRING, this.reportfile);
         this.logfile = this.logfile + "\\Import_Smarty_Payments.log";
         this.reportfile = this.reportfile + "\\imp_smarty_payments." + string(Random());
         this.log = CImportLog(logfile, reportfile);
@@ -53,7 +53,7 @@ class CLoader()
         this.Destructor();
     end;
 
-    // --- Деструктор ---
+    // --- я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ ---
     macro Destructor()
         exit(1);
     end;
@@ -67,27 +67,27 @@ class CLoader()
     end;
 
     macro Process()
-        // Печатаем шапку отчета
+        // ╨Я╨╡╤З╨░╤В╤М ╨╖╨░╨│╨╛╨╗╨╛╨▓╨║╨░ ╨╛╤В╤З╤С╤В╨░
         this.log.print_header();
-  
+
         var listFile = TDirList();
         listFile.List(SOURCE_FILE_PATH + SOURCE_PATTERN_FILE, "F");
 
         if(listFile.Count == 0)
-            this.log.print_to_log(ModuleFileName(), CurrentLine(), "ERROR", "TXT файлы в директории " + SOURCE_FILE_PATH + " не обнаружены.", True);
+            this.log.print_to_log(ModuleFileName(), CurrentLine(), "ERROR", "TXT ╤Д╨░╨╣╨╗╤Л ╨▓ ╨║╨░╤В╨░╨╗╨╛╨│╨╡ " + SOURCE_FILE_PATH + " ╨╜╨╡ ╨╛╨▒╨╜╨░╤А╤Г╨╢╨╡╨╜╤Л.", True);
             return ;
         end;
 
-        InitProgress ( listFile.Count, "", "Обрабатываем платежи");
+        InitProgress ( listFile.Count, "", "╨Ю╨▒╤А╨░╨▒╨╛╤В╨║╨░ ╨╖╨░╨┐╨╕╤Б╨╡╨╣");
 
         var i = 0;
         while ( i < listFile.Count)
-            this.log.print_to_log(ModuleFileName(), CurrentLine(), "DEBUG", "Начали обработку файла " + listFile.Name(i));
-            Message ("Начали обработку файла " + listFile.Name(i));
+            this.log.print_to_log(ModuleFileName(), CurrentLine(), "DEBUG", "╨Э╨░╤З╨╕╨╜╨░╨╡╨╝ ╨╛╨▒╤А╨░╨▒╨╛╤В╨║╤Г ╤Д╨░╨╣╨╗╨░ " + listFile.Name(i));
+            Message ("╨Э╨░╤З╨╕╨╜╨░╨╡╨╝ ╨╛╨▒╤А╨░╨▒╨╛╤В╨║╤Г ╤Д╨░╨╣╨╗╨░ " + listFile.Name(i));
 
             this.ProcessFile(SOURCE_FILE_PATH + listFile.Name(i));
-            this.log.print_to_log(ModuleFileName(), CurrentLine(), "DEBUG", "Обработка файла " + listFile.Name(i) + " завершена");
-            Message ("Обработка файла " + listFile.Name(i) + " завершена");
+            this.log.print_to_log(ModuleFileName(), CurrentLine(), "DEBUG", "╨Ю╨▒╤А╨░╨▒╨╛╤В╨║╨░ ╤Д╨░╨╣╨╗╨░ " + listFile.Name(i) + " ╨╖╨░╨▓╨╡╤А╤И╨╡╨╜╨░");
+            Message ("╨Ю╨▒╤А╨░╨▒╨╛╤В╨║╨░ ╤Д╨░╨╣╨╗╨░ " + listFile.Name(i) + " ╨╖╨░╨▓╨╡╤А╤И╨╡╨╜╨░");
 
             this.log.print_to_log(ModuleFileName(), CurrentLine(), "DEBUG", "--------------------------------------------------");
             i = i + 1;
@@ -96,20 +96,20 @@ class CLoader()
 
         RemProgress();
 
-        // Печатаем итоги
+        // ╨Я╨╡╤З╨░╤В╤М ╨╕╤В╨╛╨│╨╛╨▓
         this.log.print_total();
 
-        // Печатаем подвал отчета
+        // ╨Я╨╡╤З╨░╤В╤М ╨┐╨╛╨┤╨▓╨░╨╗╨░ ╨╛╤В╤З╤С╤В╨░
         this.log.print_footer();
     end;
 
     macro ProcessRow(full_source_filepath)
         this.pmnt = CPayment(CurrentFile);
-        this.log.print_to_log(ModuleFileName(), CurrentLine(), "DEBUG", "Разобрали платеж " + this.pmnt.to_str());
+        this.log.print_to_log(ModuleFileName(), CurrentLine(), "DEBUG", "╨Я╤А╨╕╨╜╤П╤В╨░ ╨╖╨░╨┐╨╕╤Б╤М " + this.pmnt.to_str());
 
         //this.CreateDocuments();
 
-        // печатаем платеж в отчет
+        // я┐╜я┐╜я┐╜таея┐╜ я┐╜я┐╜я┐╜теж я┐╜ я┐╜я┐╜я┐╜я┐╜
         this.log.print_row(this.pmnt);
 
         this.pmnt = Null;
@@ -119,32 +119,32 @@ class CLoader()
         private var stat;
         if (this.OpenFile(full_source_filepath))
 
-            // Начало таблицы
+            // ╨Ч╨░╨│╨╛╨╗╨╛╨▓╨╛╨║ ╤В╨░╨▒╨╗╨╕╤Ж╤Л
             this.log.print_table_header(full_source_filepath);
-           
-            SetDelim(SEPARATE); // установим разделитель
+
+            SetDelim(SEPARATE); // ╤А╨░╨╖╨┤╨╡╨╗╨╕╤В╨╡╨╗╤М ╨┐╨╛╨╗╨╡╨╣
             while( Next(CurrentFile) )
                 //debugbreak();
                 stat = this.ProcessRow(full_source_filepath);
             end;
-            // Низ таблицы
+            // ╨Я╨╛╨┤╨▓╨░╨╗ ╤В╨░╨▒╨╗╨╕╤Ж╤Л
             this.log.print_table_footer();
 
-            // закрываем в любом случае
+            // ╨Ч╨░╨║╤А╤Л╨▓╨░╨╡╨╝ ╨▓╤Е╨╛╨┤╨╜╨╛╨╣ ╤Д╨░╨╣╨╗
             Close(CurrentFile);
 
-            // в зависимости от результата копируем в нужные папки 
+            // ╨Я╨╛ ╤А╨╡╨╖╤Г╨╗╤М╤В╨░╤В╤Г ╨┐╨╡╤А╨╡╨╜╨╛╤Б╨╕╨╝ ╨╕╤Б╤Е╨╛╨┤╨╜╨╕╨║ ╨▓ ╨╜╤Г╨╢╨╜╤Г╤О ╨┐╨░╨┐╨║╤Г
             if ( stat)
-                // если все успешно, то скопируем файл в папку ОК
+                // ╨╡╤Б╨╗╨╕ ╨▓╤Б╤С ╤Г╤Б╨┐╨╡╤И╨╜╨╛, ╨║╨╛╨┐╨╕╤А╤Г╨╡╨╝ ╤Д╨░╨╣╨╗ ╨▓ OK
                 this.MoveFile(DEST_FILE_PATH_OK, full_source_filepath)
             else
-                // если все плохо, то скопируем файл в папку ERROR 
-                this.MoveFile(DEST_FILE_PATH_ERROR, full_source_filepath) 
+                // ╨╡╤Б╨╗╨╕ ╨╡╤Б╤В╤М ╨╛╤И╨╕╨▒╨║╨╕, ╨║╨╛╨┐╨╕╤А╤Г╨╡╨╝ ╨▓ ERROR
+                this.MoveFile(DEST_FILE_PATH_ERROR, full_source_filepath)
             end;
-            
+
         else
-            this.log.print_to_log(ModuleFileName(), CurrentLine(), "ERROR", "Невозможно открыть файл " + full_source_filepath);
-            this.log.print_error(full_source_filepath, "ERROR: Невозможно открыть файл");
+            this.log.print_to_log(ModuleFileName(), CurrentLine(), "ERROR", "╨Э╨╡╨▓╨╛╨╖╨╝╨╛╨╢╨╜╨╛ ╨╛╤В╨║╤А╤Л╤В╤М ╤Д╨░╨╣╨╗ " + full_source_filepath);
+            this.log.print_error(full_source_filepath, "ERROR: ╨Э╨╡╨▓╨╛╨╖╨╝╨╛╨╢╨╜╨╛ ╨╛╤В╨║╤А╤Л╤В╤М ╤Д╨░╨╣╨╗");
         end;
     end;
 
@@ -152,16 +152,16 @@ class CLoader()
         private var namefile, extfile;
         SplitFile(_source, namefile, extfile);
         private var dst = _dst + "\\" + namefile + extfile;
-        this.log.print_to_log(ModuleFileName(), CurrentLine(), "DEBUG", "Копируем файл " + _source + " в папку " + dst);
+        this.log.print_to_log(ModuleFileName(), CurrentLine(), "DEBUG", "╨Я╨╡╤А╨╡╨╜╨╛╤Б╨╕╨╝ ╤Д╨░╨╣╨╗ " + _source + " ╨▓ ╨║╨░╤В╨░╨╗╨╛╨│ " + dst);
         if (CopyFile(_source, dst))
-            this.log.print_to_log(ModuleFileName(), CurrentLine(), "DEBUG", "Успешно скопирован");
+            this.log.print_to_log(ModuleFileName(), CurrentLine(), "DEBUG", "╨Ъ╨╛╨┐╨╕╤А╨╛╨▓╨░╨╜╨╕╨╡ ╨▓╤Л╨┐╨╛╨╗╨╜╨╡╨╜╨╛");
             if (RemoveFile(_source))
-                this.log.print_to_log(ModuleFileName(), CurrentLine(), "DEBUG", "Успешно удален");
+                this.log.print_to_log(ModuleFileName(), CurrentLine(), "DEBUG", "╨г╨┤╨░╨╗╨╡╨╜╨╕╨╡ ╨╕╤Б╤Е╨╛╨┤╨╜╨╕╨║╨░ ╨▓╤Л╨┐╨╛╨╗╨╜╨╡╨╜╨╛");
             else
-                this.log.print_to_log(ModuleFileName(), CurrentLine(), "ERROR", "Ошибка при удалении файла " + _source);
+                this.log.print_to_log(ModuleFileName(), CurrentLine(), "ERROR", "╨Ю╤И╨╕╨▒╨║╨░ ╨┐╤А╨╕ ╤Г╨┤╨░╨╗╨╡╨╜╨╕╨╕ ╤Д╨░╨╣╨╗╨░ " + _source);
             end;
         else
-            this.log.print_to_log(ModuleFileName(), CurrentLine(), "ERROR", "Ошибка при копировании файла " + _source);
+            this.log.print_to_log(ModuleFileName(), CurrentLine(), "ERROR", "╨Ю╤И╨╕╨▒╨║╨░ ╨┐╤А╨╕ ╨║╨╛╨┐╨╕╤А╨╛╨▓╨░╨╜╨╕╨╕ ╤Д╨░╨╣╨╗╨░ " + _source);
         end;
     end;
 
@@ -173,16 +173,16 @@ class CLoader()
         debugbreak();
 
         scheme_name = "SmartyPay";
-        this.log.print_to_log(ModuleFileName(), CurrentLine(), "DEBUG", "Схема проводок определена: " + scheme_name);
-         
+        this.log.print_to_log(ModuleFileName(), CurrentLine(), "DEBUG", "╨б╤Е╨╡╨╝╨░ ╤Д╨╛╤А╨╝╨╕╤А╨╛╨▓╨░╨╜╨╕╤П ╨┤╨╛╨║╤Г╨╝╨╡╨╜╤В╨╛╨▓: " + scheme_name);
+
         this.pmnt.postdocs = factory.Create(scheme_name);
-        // создаем документы в отложенных
+        // ╤Д╨╛╤А╨╝╨╕╤А╨╛╨▓╨░╨╜╨╕╨╡ ╨┤╨╛╨║╤Г╨╝╨╡╨╜╤В╨╛╨▓ ╨▓ ╤В╤А╨░╨╜╨╖╨░╨║╤Ж╨╕╨╕
 
         stat = ProcessConTrn(1, R2M(this, "InsertDocumentsInTRN"));
         if (not stat)
-            this.log.print_to_log(ModuleFileName(), CurrentLine(), "ERROR", "Ошибка при выполнении транзакции");
+            this.log.print_to_log(ModuleFileName(), CurrentLine(), "ERROR", "╨Ю╤И╨╕╨▒╨║╨░ ╨┐╤А╨╕ ╨▓╤Л╨┐╨╛╨╗╨╜╨╡╨╜╨╕╨╕ ╤В╤А╨░╨╜╨╖╨░╨║╤Ж╨╕╨╕");
         else
-            this.log.print_to_log(ModuleFileName(), CurrentLine(), "DEBUG", "Отложеные документы успешно созданы.");
+            this.log.print_to_log(ModuleFileName(), CurrentLine(), "DEBUG", "╨д╨╛╤А╨╝╨╕╤А╨╛╨▓╨░╨╜╨╕╨╡ ╨┤╨╛╨║╤Г╨╝╨╡╨╜╤В╨╛╨▓ ╤Г╤Б╨┐╨╡╤И╨╜╨╛ ╨╖╨░╨▓╨╡╤А╤И╨╡╨╜╨╛.");
         end;
         return stat;
     end;
@@ -192,7 +192,7 @@ class CLoader()
         for(doc, this.pmnt.postdocs)
             errno = MakePostDoc(1, doc);
             if ( errno )
-                this.log.print_to_log(ModuleFileName(), CurrentLine(), "ERROR", "Ошибка №" + errno + " при создании отложеного документа");
+                this.log.print_to_log(ModuleFileName(), CurrentLine(), "ERROR", "╨Ю╤И╨╕╨▒╨║╨░ " + errno + " ╨┐╤А╨╕ ╨┤╨╛╨▒╨░╨▓╨╗╨╡╨╜╨╕╨╕ ╨▒╤Г╤Е╨│╨░╨╗╤В╨╡╤А╤Б╨║╨╛╨│╨╛ ╨┤╨╛╨║╤Г╨╝╨╡╨╜╤В╨░");
                 AbortTrn();
             end;
         end;

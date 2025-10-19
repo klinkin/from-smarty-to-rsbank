@@ -1,4 +1,4 @@
-// -*- coding: cp866 -*-
+// -*- coding: utf-8 -*-
 
 class PostDocFactory(_pmnt, _config)
     var pmnt;
@@ -9,29 +9,29 @@ class PostDocFactory(_pmnt, _config)
         this.pmnt = _pmnt;
         this.config = _config;
     end;
-    
+
     macro Create(type:String):Tarray
         private var i = 0;
         private var doc;
         var docs = TArray();
-        // берем из конфига нужного типа схему проводок
+        // ╤Ж╨╕╨║╨╗ ╨┐╨╛ ╤Н╨╗╨╡╨╝╨╡╨╜╤В╨░╨╝ ╤Б╤Е╨╡╨╝╤Л: ╤Б╨╛╨╖╨┤╨░╨╜╨╕╨╡ ╨┤╨╛╨║╤Г╨╝╨╡╨╜╤В╨╛╨▓
         private var scheme = this.config.schemes.Item(type);
         var template;
 
         for(template, scheme)
-            // для каждого шаблона в схеме создаем проводку
+            // ╨┤╨╗╤П ╨║╨░╨╢╨┤╨╛╨│╨╛ ╤И╨░╨▒╨╗╨╛╨╜╨░ ╤Б╨╛╨╖╨┤╨░╤С╨╝ ╨┤╨╛╨║╤Г╨╝╨╡╨╜╤В
             doc = this.CreatePostDoc(template);
-            // если сумма документа 0, то пропускаем такой документ
+            // ╨╡╤Б╨╗╨╕ ╤Б╤Г╨╝╨╝╨░ ╨┤╨╛╨║╤Г╨╝╨╡╨╜╤В╨░ > 0 тАФ ╨┤╨╛╨▒╨░╨▓╨╗╤П╨╡╨╝ ╨╡╨│╨╛
             if ( doc.rec.Sum > 0 )
                 docs[docs.size] = doc;
             end;
-        end; 
+        end;
         return docs;
     end;
 
     macro getSpecParams(text:String, sign_begin:String, sign_end:String): TArray
-        // Метод парсит входящую строку text, выделяет спецпеременные, начинающиеся на sign_begin и окнчивающиеся на sign_end.
-        // Возвращает массив спец переменных.
+        // ╨╕╤Й╨╡╤В ╨▓ ╤В╨╡╨║╤Б╤В╨╡ ╨┐╨░╤А╤Л ╨╝╨░╤А╨║╨╡╤А╨╛╨▓ sign_begin/sign_end
+        // ╨▓╨╛╨╖╨▓╤А╨░╤Й╨░╨╡╤В ╨╝╨░╤Б╤Б╨╕╨▓ ╨╜╨░╨╣╨┤╨╡╨╜╨╜╤Л╤Е ╨▓╤Е╨╛╨╢╨┤╨╡╨╜╨╕╨╣
         var result = TArray;
         var ind_begin, ind_end;
         while ( Index( text, sign_begin ) > 0 )
@@ -40,8 +40,8 @@ class PostDocFactory(_pmnt, _config)
             if ( ind_end > 0 )
                 result[result.size] = SubStr(text, ind_begin, ind_end - ind_begin + StrLen(sign_end));
                 text = SubStr(text, ind_end + StrLen(sign_end))
-            else 
-                msgbox("Тег " + sign_begin + "не закрыт");
+            else
+                msgbox("я┐╜я┐╜я┐╜ " + sign_begin + "я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜");
                 break;
             end;
         end;
@@ -52,8 +52,8 @@ class PostDocFactory(_pmnt, _config)
         private var mm, dd, yyyy, result;
         private var expr;
 
-        // в тексте могут встречаться спецпеременные, начинающиеся на {{ и оканчивающиеся }}
-        // получим из текста все спец переменные
+        // ╨╖╨░╨╝╨╡╨╜╤П╨╡╨╝ ╨┐╨╗╨╡╨╣╤Б╤Е╨╛╨╗╨┤╨╡╤А╤Л {{ }} ╨╖╨╜╨░╤З╨╡╨╜╨╕╤П╨╝╨╕ ╨╕╨╖ ╨┐╨╗╨░╤В╨╡╨╢╨░
+        // ╨┐╨╡╤А╨╡╨┐╨╕╤Б╤Л╨▓╨░╨╡╨╝ text ╨┐╨╛╤Б╨╗╨╡ ╨┐╨╛╨┤╤Б╤В╨░╨╜╨╛╨▓╨╛╨║
         private var spec_params = this.getSpecParams(text, "{{", "}}");
         var param, val;
         for(param, spec_params)
@@ -61,31 +61,31 @@ class PostDocFactory(_pmnt, _config)
             text = StrSubst(text, param, val);
         end;
 
-        // также в тексте могут быть счета отеделения, начинающиеся на #
+        // ╨╖╨░╤В╨╡╨╝ ╨┐╨╛╨┤╤Б╤В╨░╨▓╨╗╤П╨╡╨╝ [[ ]] тАФ ╤Б╤З╨╡╤В╨░ ╨╕╨╖ ╨║╨╛╨╜╤Д╨╕╨│╤Г╤А╨░╤Ж╨╕╨╕
         private var sharp_params = this.getSpecParams(text, "[[", "]]");
         for(param, sharp_params)
-            
+
             if (iscur == 0)
                 val = this.config.getAccount(SubStr(param, 3, StrLen(param) - 4), "RUR", this.pmnt.getPointCode());
-            else   
+            else
                 val = this.config.getAccount(SubStr(param, 3, StrLen(param) - 4), this.pmnt.pmnt.Item("trnCurrency"), this.pmnt.getPointCode());
             end;
             text = StrSubst(text, param, val);
         end;
 
-        //А еще можно передать кусок rsl кода, должен начинаться на {{ и заканчиваться }}
+        // ╨▓╤Л╤З╨╕╤Б╨╗╤П╨╡╨╝ ╨▓╤Л╤А╨░╨╢╨╡╨╜╨╕╤П #@ @# ╤З╨╡╤А╨╡╨╖ ExecExp; ╨┤╨╗╤П ╨┤╨░╤В ╨▓╨╛╨╖╨▓╤А╨░╤Й╨░╨╡╨╝ date(...)
         private var function_params = this.getSpecParams(text, "#@" , "@#");
         for(param, function_params)
             expr = SubStr(param, 3, StrLen(param) - 4);
             val = string(ExecExp(expr));
             text = StrSubst(text, param, val);
             if(vtype == V_DATE)
-                // вернем без приведения
+                // я┐╜я┐╜рнея┐╜ я┐╜я┐╜я┐╜ я┐╜ривя┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
                 return date(text);
-            end; 
+            end;
         end;
-         
-         
+
+
         if (vtype == V_INTEGER)
             result = int(text);
         elif(vtype == V_NUMERIC)
@@ -93,12 +93,12 @@ class PostDocFactory(_pmnt, _config)
         elif(vtype == V_DATE)
             dd = int(SubStr(text, 7, 2));
             mm = int(SubStr(text, 5, 2));
-            yyyy = int(SubStr(text, 1, 4)); 
+            yyyy = int(SubStr(text, 1, 4));
             result = date(dd, mm, yyyy);
         else
-            result = text; 
+            result = text;
         end;
-        return result;         
+        return result;
     end;
 
     macro CreatePostDoc(template):TRecHandler
@@ -114,26 +114,26 @@ class PostDocFactory(_pmnt, _config)
         private var v_postdoc = TRecHandler("postdoc$.dbt", "bank.def");
         private var child, ind, field_type, value;
         debugbreak();
-        // сначала заполним данными по дефолту, потом уже теми, что из xml-шаблона
+        // ╤Б╨╜╨░╤З╨░╨╗╨░ ╨╖╨░╨┐╨╛╨╗╨╜╤П╨╡╨╝ ╨╛╨▒╤П╨╖╨░╤В╨╡╨╗╤М╨╜╤Л╨╡ ╨┐╨╛╨╗╤П, ╨╜╨╡ ╨╖╨░╨▓╨╕╤Б╤П╤Й╨╕╨╡ ╨╛╤В xml-╤И╨░╨▒╨╗╨╛╨╜╨░
         v_postdoc.clear();
         v_postdoc.rec.oper       = {oper};
         v_postdoc.rec.Payment    = 6;
         v_postdoc.rec.Shifr_Oper = "09";
         v_postdoc.rec.Kind_Oper  = " 1";
 
-        if ( this.pmnt.pmnt.Item("trnCurrency") == "USD")  
+        if ( this.pmnt.pmnt.Item("trnCurrency") == "USD")
             v_postdoc.rec.Code_Currency  = 840;
-        elif ( this.pmnt.pmnt.Item("trnCurrency") == "EUR")  
+        elif ( this.pmnt.pmnt.Item("trnCurrency") == "EUR")
             v_postdoc.rec.Code_Currency  = 978;
         end;
 
-        // данные из xml-шаблона, при этом дефолтные переписываются
+        // ╨┤╨░╨╗╨╡╨╡ ╨┐╨╛ xml-╤И╨░╨▒╨╗╨╛╨╜╤Г ╨┐╤А╨╛╤Б╤В╨░╨▓╨╗╤П╨╡╨╝ ╨┐╨╛╨╗╤П ╨▓ ╨╖╨░╨┐╨╕╤Б╤М
         while (i < template.Keys.Size)
             ind = FldIndex( v_postdoc, template.Keys[i]);
             if ( ind >= 0 )
-                field_type = v_postdoc.GetFldInfo[ind * 5 + 1];  // это хитрый способ получить тип поля в структуре
-                value = this.getValue(template.Items[i], field_type, template.Item("IsCur")); // значение из шаблона
-                v_postdoc.rec[ind] = value;  
+                field_type = v_postdoc.GetFldInfo[ind * 5 + 1];  // я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜ способ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ тип я┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
+                value = this.getValue(template.Items[i], field_type, template.Item("IsCur")); // я┐╜я┐╜я┐╜ченя┐╜я┐╜ я┐╜я┐╜ шабя┐╜я┐╜я┐╜я┐╜
+                v_postdoc.rec[ind] = value;
             end;
             i = i + 1;
         end;
@@ -142,12 +142,12 @@ class PostDocFactory(_pmnt, _config)
     end;
 
     macro CreateRURPostDoc(template, currency:Integer):TRecHandler
-        
+
         private var i = 0;
         private var r_postdoc = TRecHandler("postdoc.dbt", "bank.def");
         private var child, ind, field_type, value;
 
-        // сначала заполним данными по дефолту, потом уже теми, что из xml-шаблона
+        // ╤Б╨╜╨░╤З╨░╨╗╨░ ╨╖╨░╨┐╨╛╨╗╨╜╤П╨╡╨╝ ╨╛╨▒╤П╨╖╨░╤В╨╡╨╗╤М╨╜╤Л╨╡ ╨┐╨╛╨╗╤П, ╨╜╨╡ ╨╖╨░╨▓╨╕╤Б╤П╤Й╨╕╨╡ ╨╛╤В xml-╤И╨░╨▒╨╗╨╛╨╜╨░
         r_postdoc.clear();
         r_postdoc.rec.oper       = {oper};
         r_postdoc.rec.Payment    = 6;
@@ -156,13 +156,13 @@ class PostDocFactory(_pmnt, _config)
 
         r_postdoc.rec.Code_Currency  = 0;
 
-        // данные из xml-шаблона, при этом дефолтные переписываются
+        // ╨┤╨░╨╗╨╡╨╡ ╨┐╨╛ xml-╤И╨░╨▒╨╗╨╛╨╜╤Г ╨┐╤А╨╛╤Б╤В╨░╨▓╨╗╤П╨╡╨╝ ╨┐╨╛╨╗╤П ╨▓ ╨╖╨░╨┐╨╕╤Б╤М
         while (i < template.Keys.Size)
             ind = FldIndex( r_postdoc, template.Keys[i]);
             if ( ind >= 0 )
-                field_type = r_postdoc.GetFldInfo[ind * 5 + 1];  // это хитрый способ получить тип поля в структуре
-                value = this.getValue(template.Items[i], field_type, template.Item("IsCur")); // значение из шаблона
-                r_postdoc.rec[ind] = value;  
+                field_type = r_postdoc.GetFldInfo[ind * 5 + 1];  // я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜ способ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ тип я┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
+                value = this.getValue(template.Items[i], field_type, template.Item("IsCur")); // я┐╜я┐╜я┐╜ченя┐╜я┐╜ я┐╜я┐╜ шабя┐╜я┐╜я┐╜я┐╜
+                r_postdoc.rec[ind] = value;
             end;
             i = i + 1;
         end;

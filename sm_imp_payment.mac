@@ -1,12 +1,12 @@
-// -*- coding: cp866 -*-
+// -*- coding: utf-8 -*-
 
 import sm_imp_const;
 
-// Класс платежа
+// ╨Ъ╨╗╨░╤Б╤Б ╨┐╨╗╨░╤В╨╡╨╢╨░
 class CPayment(_file_row)
     var pmnt;
-    var errors; // массив ошибок
-    var postdocs; // массив проводок
+    var errors; // я┐╜я┐╜я┐╜сив я┐╜шибя┐╜я┐╜
+    var postdocs; // я┐╜я┐╜я┐╜сив я┐╜ровя┐╜я┐╜я┐╜я┐╜
 
     macro Constructor(_file_row)
         //debugbreak();
@@ -28,9 +28,9 @@ class CPayment(_file_row)
         pmnt.Add("PURPOSE", _file_row(PURPOSE));
     end;
 
-    macro to_str()                                                                                              
-        return string(" Номер " + this.pmnt.item("NUM") + ", сумма " + this.pmnt.item("SUM") + ", по карте " + this.pmnt.item("CARD_NUM"));
+    macro to_str()
+        return string(" я┐╜я┐╜я┐╜я┐╜я┐╜ " + this.pmnt.item("NUM") + ", я┐╜уммя┐╜ " + this.pmnt.item("SUM") + ", я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜ " + this.pmnt.item("CARD_NUM"));
     end;
 
     Constructor(_file_row);
-end;        
+end;

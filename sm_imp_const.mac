@@ -1,16 +1,15 @@
-// -*- coding: cp866 -*-
+// -*- coding: utf-8 -*-
 
 const SCHEME_FILE_NAME = "SmartyDocumentsScheme.xml";
-const ACCOUNTS_FILE_NAME = "SmartyAccounts.xml"; 
-
-// ��४�ਨ ��� ����� ��室�� 䠩��
+const ACCOUNTS_FILE_NAME = "SmartyAccounts.xml";
+// Путь к каталогу исходных файлов
 const SOURCE_FILE_PATH  = "..\\Import\\SMARTY\\SOURCE\\";
 const SOURCE_PATTERN_FILE = "*.txt";
 const SEPARATE = ";";
 
-// ��४�ਨ �㤠 �� 䠩�� ��४���뢠�� ��᫥ ��ࠡ�⪨
-const DEST_FILE_PATH_OK = "..\\Import\\SMARTY\\RESULT\\OK\\";             // ��
-const DEST_FILE_PATH_ERROR = "..\\Import\\SMARTY\\RESULT\\ERROR\\";       // �஡����
+// Путь для файлов после обработки: успешных и с ошибками
+const DEST_FILE_PATH_OK = "..\\Import\\SMARTY\\RESULT\\OK\\";             // успех
+const DEST_FILE_PATH_ERROR = "..\\Import\\SMARTY\\RESULT\\ERROR\\";       // ошибки
 
 const NUM = 0;
 const PDATE = 1;

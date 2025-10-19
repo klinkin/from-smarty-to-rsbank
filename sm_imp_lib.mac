@@ -1,18 +1,18 @@
-// -*- coding: cp866 -*-
+// -*- coding: utf-8 -*-
 
 import fileop, rcw, rslx, rsexts;
 
-// ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-// Š« áá ¤«ï à ¡®âë á xml-ä ©« ¬¨
-// ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+// ------------------------------------------------------------
+// ÐžÐ±Ñ‘Ñ€Ñ‚ÐºÐ° Ð´Ð»Ñ Ñ€Ð°Ð±Ð¾Ñ‚Ñ‹ Ñ XML-Ñ„Ð°Ð¹Ð»Ð°Ð¼Ð¸
+// ------------------------------------------------------------
 class CRtReportXML
-  var doc:object  = NULL;  // ­¥¯®áà¥¤áâ¢¥­­® XML-¤®ªã¬¥­â
+  var doc:object  = NULL;  // COM-Ð¾Ð±ÑŠÐµÐºÑ‚ XML-Ð´Ð¾ÐºÑƒÐ¼ÐµÐ½Ñ‚Ð°
   var err:integer = 0;
 
   private macro error()
-    if( doc.ParseError.errorCode )   
+    if( doc.ParseError.errorCode )
       err = doc.ParseError.errorCode;
-    else                             
+    else
       err = -1;
     end;
     return err;
@@ -28,7 +28,7 @@ class CRtReportXML
 
   private macro CreateXML6Object( xml:object )
     var axServer = NULL;
-    
+
     if( isStandalone() )
       SetParm(1, ActiveX ("Msxml2.DOMDocument.6.0", null, true ) );
     else
@@ -44,7 +44,7 @@ class CRtReportXML
 
   private macro CreateXML4Object( xml:object )
     var axServer = NULL;
-    
+
     if( isStandalone() )
       SetParm(1, ActiveX ("Msxml2.DOMDocument.4.0", null, true ) );
     else
@@ -60,7 +60,7 @@ class CRtReportXML
 
   private macro CreateXML2Object( xml:object )
     var axServer = NULL;
-    
+
     if( isStandalone() )
       SetParm(1, ActiveX ("Msxml2.DOMDocument", null, true ) );
     else
@@ -88,69 +88,69 @@ class CRtReportXML
     OnError( er )
       return false;
   end;
-  // ÄÄÄ á®§¤ ­¨¥ xml-®¡ê¥ªâ  ÄÄÄ
+  // Ð¡Ð¾Ð·Ð´Ð°Ð½Ð¸Ðµ XML-Ð¾Ð±ÑŠÐµÐºÑ‚Ð° (Ð¿Ð¾Ð¸ÑÐº Ð´Ð¾ÑÑ‚ÑƒÐ¿Ð½Ð¾Ð¹ Ð²ÐµÑ€ÑÐ¸Ð¸)
   private macro CreateXMLObject()
     var obj:object = NULL;
 
-    if( CreateXML6Object(obj) )  return obj;  end;      
-    if( CreateXML4Object(obj) )  return obj;  end;      
-    if( CreateXML2Object(obj) )  return obj;  end;      
+    if( CreateXML6Object(obj) )  return obj;  end;
+    if( CreateXML4Object(obj) )  return obj;  end;
+    if( CreateXML2Object(obj) )  return obj;  end;
     if( CreateXML1Object(obj) )  return obj;  end;
 
-    RunError("Žè¨¡ª  ¨­¨æ¨ «¨§ æ¨¨ Active-X ª®¬¯®­¥­â .");
+    RunError("ÐžÑˆÐ¸Ð±ÐºÐ° Ð¸Ð½Ð¸Ñ†Ð¸Ð°Ð»Ð¸Ð·Ð°Ñ†Ð¸Ð¸ Active-X ÐºÐ¾Ð¼Ð¿Ð¾Ð½ÐµÐ½Ñ‚Ð°.");
   end;
-  // ÄÄÄ Š®­áâàãªâ®à ÄÄÄ
+  // ÐšÐ¾Ð½ÑÑ‚Ñ€ÑƒÐºÑ‚Ð¾Ñ€
   private macro Constructor()
     doc = CreateXMLObject();
     return 0;
     onError
-      msgbox("Žè¨¡ª  ¨­¨æ¨ «¨§ æ¨¨ Active-X ª®¬¯®­¥­â .\n‚®§¬®¦­® ­¥®¡å®¤¨¬® ¯¥à¥ãáâ ­®¢¨âì Internet Explorer.");
+      msgbox("ÐžÑˆÐ¸Ð±ÐºÐ° Ð¸Ð½Ð¸Ñ†Ð¸Ð°Ð»Ð¸Ð·Ð°Ñ†Ð¸Ð¸ Active-X ÐºÐ¾Ð¼Ð¿Ð¾Ð½ÐµÐ½Ñ‚Ð°.\nÐŸÑ€Ð¾Ð²ÐµÑ€ÑŒÑ‚Ðµ Ð½Ð°ÑÑ‚Ñ€Ð¾Ð¹ÐºÐ¸ Ð±ÐµÐ·Ð¾Ð¿Ð°ÑÐ½Ð¾ÑÑ‚Ð¸ Internet Explorer.");
       exit(1);
       return error();
   end;
-  // ÄÄÄ § £àã§ª  ä ©«  ÄÄÄ
+  // Ð—Ð°Ð³Ñ€ÑƒÐ·ÐºÐ° Ñ„Ð°Ð¹Ð»Ð°
   macro Load( path:string )
     doc.load( path );
     return 0;
     onError
       return error();
   end;
-  // ÄÄÄ á®åà ­¥­¨¥ ÄÄÄ
+  // Ð¡Ð¾Ñ…Ñ€Ð°Ð½ÐµÐ½Ð¸Ðµ Ñ„Ð°Ð¹Ð»Ð°
   macro Save( path:string )
     doc.save( path );
     return 0;
     onError
       return error();
   end;
-  // ÄÄÄ ¨­¨æ¨ «¨§ æ¨ï ÄÄÄ
+  // Ð˜Ð½Ð¸Ñ†Ð¸Ð°Ð»Ð¸Ð·Ð°Ñ†Ð¸Ñ ÐºÐ¾Ñ€Ð½ÐµÐ²Ð¾Ð¹ Ñ‡Ð°ÑÑ‚Ð¸
   macro Init()
-    var vrsn = doc.createProcessingInstruction( "xml", "version=\"1.0\" encoding=\"WINDOWS-1251\"" );
+    var vrsn = doc.createProcessingInstruction( "xml", "version=\"1.0\" encoding=\"UTF-8\"" );
     doc.appendChild( vrsn );
     return 0;
     onError
       return error();
   end;
 
-  // Š®­áâàãªâ®à
+  // Ð˜Ð½Ð¸Ñ†Ð¸Ð°Ð»Ð¸Ð·Ð°Ñ†Ð¸Ñ
   Constructor();
 end;
 
-macro GetRegVal( ãâì, ’¨¯, Val )
+macro GetRegVal( ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½, Val )
 
   Var err;
 
-  GetRegistryValue( ãâì, ’¨¯, Val, err );
+  GetRegistryValue( ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½, Val, err );
 
-  if  ( err != REG_OK ) 
-     MsgBox( "Žè¨¡ª  çâ¥­¨ï ª«îç  ", ãâì );
-     if ( ’¨¯ == V_STRING ) Val = False;
+  if  ( err != REG_OK )
+     MsgBox( "ÐžÑˆÐ¸Ð±ÐºÐ° Ñ‡Ñ‚ÐµÐ½Ð¸Ñ ÐºÐ»ÑŽÑ‡Ð° Ñ€ÐµÐµÑÑ‚Ñ€Ð° ", ï¿½ï¿½ï¿½ï¿½ );
+     if ( ï¿½ï¿½ï¿½ == V_STRING ) Val = False;
      else                   Val = 0;
-     end;    
+     end;
   else
-     if ( ’¨¯ == V_STRING )
-       if((index( Val,"YES") > 0) OR (index("ON") > 0)) 
+     if ( ï¿½ï¿½ï¿½ == V_STRING )
+       if((index( Val,"YES") > 0) OR (index(Val, "ON") > 0))
           Val = TRUE;
-       elif((index( Val,"NO")  > 0) OR (index("OFF") > 0))
+       elif((index( Val,"NO")  > 0) OR (index(Val, "OFF") > 0))
           Val = FALSE;
        end;
      end;
@@ -162,7 +162,7 @@ end;
 macro FindBranch(_branch)
     private file BranchList ("listfdep.dbt", "sbbank.def") key 0;
     var stat;
-    
+
     BranchList.FNCash = _branch;
     stat = GetEQ(BranchList);
     if (stat)
@@ -187,13 +187,13 @@ end;
 
 macro StrToDate(str_date: string, date_date, errmsg)
     var Razd, day, mon, year;
-    
+
     if ( StrBrk (str_date, ".-/") == 0 )
-      errmsg = "(1) ¥¢¥à­ë© ä®à¬ â ¤ âë " + str_date;
+      errmsg = "(1) ÐžÑˆÐ¸Ð±ÐºÐ° Ñ‡Ñ‚ÐµÐ½Ð¸Ñ Ð´Ð°Ñ‚Ñ‹ " + str_date;
       setparm(3, errmsg);
       return False;
     end;
-    
+
     if ( Index( str_date, "." ) > 0 )
         Razd = ".";
     elif ( Index( str_date, "-" ) > 0 )
@@ -201,13 +201,13 @@ macro StrToDate(str_date: string, date_date, errmsg)
     elif ( Index( str_date, "/" ) > 0 )
         Razd = "/";
     end;
-    
+
     day = int(SubStr( str_date, 1, Index(str_date, Razd) - 1));
     str_date = SubStr( str_date, Index(str_date, Razd) + 1);
     mon = int(SubStr( str_date, 1, Index( str_Date, Razd ) - 1));
     str_date = SubStr( str_date, Index( str_date, Razd) + 1);
     year = int(str_date);
-    
+
     if ( ( ( year == 0 ) and ( mon == 0 ) and ( day == 0 ) ) or
          ( ( year > 0 ) and
            ( mon > 0 )  and ( mon < 13 ) and
@@ -217,7 +217,7 @@ macro StrToDate(str_date: string, date_date, errmsg)
       setparm(1, date( day, mon, year));
       return True;
     else
-      errmsg = "(1) ¥¢¥à­ ï ¤ â  " + str_date;
+      errmsg = "(1) ÐÐµÐ²ÐµÑ€Ð½Ñ‹Ð¹ Ñ„Ð¾Ñ€Ð¼Ð°Ñ‚ Ð´Ð°Ñ‚Ñ‹ " + str_date;
       setparm(2, errmsg);
       return False;
     end;

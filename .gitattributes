@@ -1,0 +1,13 @@
+* text=auto eol=lf
+
+# Treat these as UTF-8 text in the working tree
+*.mac text working-tree-encoding=UTF-8
+*.xml text working-tree-encoding=UTF-8
+*.txt text working-tree-encoding=UTF-8
+
+# Common binary types (keep as-is)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary

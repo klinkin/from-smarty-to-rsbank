@@ -1,4 +1,4 @@
-// -*- coding: cp866 -*-
+// -*- coding: utf-8 -*-
 
 import rsexts;
 import sm_imp_const, sm_imp_lib, sm_exception;
@@ -9,7 +9,7 @@ file fileAccounts() txt 4096;
 class CConfig()
     var rawXmlSchemes;
     var rawXmlAccounts;
-    var schemes; 
+    var schemes;
     var accounts;
     var logger;
 
@@ -21,7 +21,7 @@ class CConfig()
 
         this.OpenFile(SCHEME_FILE_NAME, fileScheme);
         this.OpenFile(ACCOUNTS_FILE_NAME, fileAccounts);
- 
+
         this.LoadSchemes();
         this.LoadAccounts();
     end;
@@ -30,13 +30,13 @@ class CConfig()
         private var flagOpenFile;
         private var listFile = TDirList();
         listFile.List(SplitFile(ModuleFileName()) + fileName, "F");
-   
+
         if(listFile.Count == 0)
-            RunError ("î†©´ ≠• ≠†©§•≠", FileNotFoundError("î†©´ ≠• ≠†©§•≠", fileName));
+            RunError ("–§–∞–π–ª –Ω–µ –Ω–∞–π–¥–µ–Ω", FileNotFoundError("–§–∞–π–ª –Ω–µ –Ω–∞–π–¥–µ–Ω", fileName));
         else
             flagOpenFile = Open( fileDescriptor, SplitFile(ModuleFileName()) + fileName );
             if (flagOpenFile == False)
-                RunError ("ç•¢Æß¨Æ¶≠Æ Æ‚™‡Î‚Ï ‰†©´", OpenFileError("ç•¢Æß¨Æ¶≠Æ Æ‚™‡Î‚Ï ‰†©´", fileName));
+                RunError ("–ù–µ–≤–æ–∑–º–æ–∂–Ω–æ –æ—Ç–∫—Ä—ã—Ç—å —Ñ–∞–π–ª", OpenFileError("–ù–µ–≤–æ–∑–º–æ–∂–Ω–æ –æ—Ç–∫—Ä—ã—Ç—å —Ñ–∞–π–ª", fileName));
             end;
         end;
     end;
@@ -63,7 +63,7 @@ class CConfig()
                 end;
             end;
         else
-            RunError("ç•¢•‡≠Î© ‰Æ‡¨†‚ xml-‰†©´†", XMLParserError("ç•¢•‡≠Î© ‰Æ‡¨†‚ xml-‰†©´†", SCHEME_FILE_NAME))
+            RunError("–û—à–∏–±–∫–∞ —á—Ç–µ–Ω–∏—è xml-—Ñ–∞–π–ª–∞", XMLParserError("–û—à–∏–±–∫–∞ —á—Ç–µ–Ω–∏—è xml-—Ñ–∞–π–ª–∞", SCHEME_FILE_NAME))
         end
     end;
 
@@ -103,7 +103,7 @@ class CConfig()
                 end;
             end;
         else
-            RunError("ç•¢•‡≠Î© ‰Æ‡¨†‚ xml-‰†©´†", XMLParserError("ç•¢•‡≠Î© ‰Æ‡¨†‚ xml-‰†©´†", ACCOUNTS_FILE_NAME))
+            RunError("–û—à–∏–±–∫–∞ —á—Ç–µ–Ω–∏—è xml-—Ñ–∞–π–ª–∞", XMLParserError("–û—à–∏–±–∫–∞ —á—Ç–µ–Ω–∏—è xml-—Ñ–∞–π–ª–∞", ACCOUNTS_FILE_NAME))
         end
     end;
 
@@ -136,9 +136,9 @@ class CConfig()
         return "Account not found";
     end;
 
-    // --- Ñ•·‚‡„™‚Æ‡ ---
+    // --- –î–µ—Å—Ç—Ä—É–∫—Ç–æ—Ä ---
     macro Destructor
-       // ß†™‡Î¢†•¨ ‰†©´Î
+       // –ó–∞–∫—Ä—ã–≤–∞–µ–º —Ñ–∞–π–ª—ã
        Close(fileScheme);
        Close(fileAccounts);
     end;
