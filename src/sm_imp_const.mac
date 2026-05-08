@@ -1,7 +1,7 @@
 // -*- coding: utf-8 -*-
 
-const SCHEME_FILE_NAME = "SmartyDocumentsScheme.xml";
-const ACCOUNTS_FILE_NAME = "SmartyAccounts.xml";
+const SCHEME_FILE_NAME = "..\\config\\SmartyDocumentsScheme.xml";
+const ACCOUNTS_FILE_NAME = "..\\config\\SmartyAccounts.xml";
 // Путь к каталогу исходных файлов
 const SOURCE_FILE_PATH  = "..\\Import\\SMARTY\\SOURCE\\";
 const SOURCE_PATTERN_FILE = "*.txt";
